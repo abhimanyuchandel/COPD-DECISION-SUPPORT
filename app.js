@@ -412,7 +412,11 @@ function buildInitialRecommendations(group, data) {
   }
 
   if (data.concomitantAsthma) {
-    plan.push("Because asthma overlap is suspected or confirmed, include an ICS-containing regimen and follow asthma-focused treatment principles.");
+    plan.push("Because concomitant asthma is suspected or confirmed, use an ICS-containing maintenance regimen and follow asthma-focused treatment principles. Avoid LABA without ICS.");
+    if (group === "B" || group === "E") {
+      plan.push("Because this patient otherwise meets a higher-intensity COPD pathway, consider LABA + LAMA + ICS so the regimen remains ICS-containing.");
+    }
+    rationale.push("Asthma overlap changes the initial pathway because GOLD states COPD with concomitant asthma should be treated like asthma and requires ICS.");
   }
 
   plan.push("Ensure a rescue short-acting bronchodilator is available for immediate symptom relief.");
@@ -429,6 +433,9 @@ function buildFollowUpRecommendations(data) {
 
   if (data.currentRegimen === "naive") {
     plan.push("Follow-up management was selected, but no maintenance regimen is documented. Use the initial pharmacologic pathway first, then reassess response.");
+    if (data.concomitantAsthma) {
+      plan.push("Because concomitant asthma is suspected or confirmed, the next maintenance regimen should include ICS rather than bronchodilator monotherapy alone.");
+    }
     rationale.push("Follow-up algorithms in GOLD 2026 are intended for patients already receiving maintenance treatment.");
     return { plan, rationale, medicationDetails };
   }
@@ -503,6 +510,21 @@ function buildFollowUpRecommendations(data) {
   } else {
     plan.push("No active dyspnea or exacerbation trigger was entered for follow-up escalation, so maintain current therapy if it is effective and well tolerated.");
     rationale.push("Follow-up reassessment did not identify a dominant dyspnea or exacerbation target.");
+  }
+
+  // GOLD states COPD with concomitant asthma should be treated like asthma, so ICS should not be omitted.
+  if (data.concomitantAsthma) {
+    rationale.push("Asthma overlap changes the follow-up pathway because GOLD states COPD with concomitant asthma should be treated like asthma and requires ICS.");
+
+    if (data.currentRegimen === "mono") {
+      plan.push("Current maintenance therapy may not include ICS. Because concomitant asthma is present, transition to an ICS-containing regimen rather than bronchodilator monotherapy alone.");
+    } else if (data.currentRegimen === "laba-lama") {
+      plan.push("Current LABA + LAMA regimen lacks ICS. Because concomitant asthma is present, step up to LABA + LAMA + ICS unless ICS is contraindicated or the asthma diagnosis is revised.");
+    } else if (data.currentRegimen === "triple") {
+      plan.push("Maintain the ICS-containing component because concomitant asthma is present; only consider ICS withdrawal after careful reassessment if harms clearly outweigh benefit.");
+    } else {
+      plan.push("Clarify the current maintenance regimen and ensure it includes ICS because concomitant asthma is present.");
+    }
   }
 
   plan.push("At every follow-up visit, review adherence, inhaler technique, device fit, and comorbid contributors before escalating treatment.");
@@ -597,7 +619,7 @@ function buildCautions(data) {
     cautions.push("Entered FEV1/FVC is 0.70 or greater; re-check the diagnosis and differential before applying the COPD algorithm.");
   }
   if (data.concomitantAsthma) {
-    cautions.push("Asthma overlap is suspected or confirmed, so include asthma treatment principles and an ICS-containing regimen.");
+    cautions.push("Asthma overlap is suspected or confirmed, so include asthma treatment principles and an ICS-containing regimen. Avoid LABA without ICS and be cautious about ICS withdrawal.");
   }
   if (data.managementPhase === "initial" && data.currentRegimen !== "naive") {
     cautions.push("Initial management was selected, but a maintenance regimen is already documented. Confirm whether this should instead be handled as follow-up management.");
