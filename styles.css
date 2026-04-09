@@ -113,8 +113,29 @@ label {
 .checkbox-row {
   display: flex;
   align-items: flex-start;
+  justify-content: flex-start;
   gap: 0.55rem;
   font-weight: 600;
+  text-align: left;
+}
+
+.checkbox-row input {
+  width: auto;
+  flex: 0 0 auto;
+  margin: 0.08rem 0 0;
+}
+
+.checkbox-grid {
+  align-items: start;
+}
+
+.checkbox-grid .checkbox-row {
+  width: 100%;
+  min-height: 72px;
+  border: 1px solid #d4e0ea;
+  border-radius: 10px;
+  background: #f9fcfe;
+  padding: 0.72rem 0.8rem;
 }
 
 .spirometry-grid {
@@ -134,7 +155,6 @@ label {
 }
 
 .inline-confirmation input {
-  width: auto;
   margin: 0.05rem 0 0;
 }
 

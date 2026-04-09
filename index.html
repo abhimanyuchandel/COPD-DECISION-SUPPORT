@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>COPD Management Decision Support Tool</title>
-  <link rel="stylesheet" href="styles.css?v=20260409-3">
-  <script src="app.js?v=20260409-3" defer></script>
+  <link rel="stylesheet" href="styles.css?v=20260409-4">
+  <script src="app.js?v=20260409-4" defer></script>
 </head>
 <body>
   <main class="app-shell">
@@ -253,7 +253,7 @@
             <input id="cigarettes-per-day" type="number" min="0" max="100" step="1" placeholder="15">
           </label>
         </div>
-        <div class="grid">
+        <div class="grid checkbox-grid">
           <label class="checkbox-row">
             <input type="checkbox" id="first-cigarette-30">
             First cigarette within 30 minutes of waking
@@ -330,7 +330,7 @@
             <option value="other">Other / unclear regimen</option>
           </select>
         </label>
-        <div class="grid">
+        <div class="grid checkbox-grid">
           <label class="checkbox-row">
             <input type="checkbox" id="persistent-dyspnea">
             Persistent dyspnea or activity limitation despite therapy
