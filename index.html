@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>COPD Management Decision Support Tool</title>
-  <link rel="stylesheet" href="styles.css?v=20260409-2">
-  <script src="app.js?v=20260409-2" defer></script>
+  <link rel="stylesheet" href="styles.css?v=20260409-3">
+  <script src="app.js?v=20260409-3" defer></script>
 </head>
 <body>
   <main class="app-shell">
@@ -34,7 +34,7 @@
             <input id="age" type="number" min="18" max="120" step="1" placeholder="67">
           </label>
         </div>
-        <div class="grid">
+        <div class="grid spirometry-grid">
           <label>
             Post-BD FEV1/FVC ratio (optional)
             <input id="fev1fvc" type="number" min="0" max="90" step="any" placeholder="0.62">
@@ -47,13 +47,10 @@
             Resting SpO2 % (optional)
             <input id="resting-spo2" type="number" min="50" max="100" step="1" placeholder="92">
           </label>
-        </div>
-        <div class="confirmation-card">
-          <label class="checkbox-row confirmation-row">
+          <label class="checkbox-row inline-confirmation">
             <input type="checkbox" id="spirometry-confirmed">
             Post-bronchodilator spirometry confirms COPD (FEV1/FVC &lt; 0.70)
           </label>
-          <p class="hint">Use this confirmation after reviewing the spirometry values above.</p>
         </div>
       </section>
 
