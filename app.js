@@ -16,6 +16,18 @@ function getSelectValue(id) {
   return document.getElementById(id).value;
 }
 
+function normalizeFev1FvcValue(value) {
+  if (!Number.isFinite(value)) {
+    return { value: null, convertedFromPercent: false };
+  }
+
+  if (value >= 30 && value <= 90) {
+    return { value: value / 100, convertedFromPercent: true };
+  }
+
+  return { value, convertedFromPercent: false };
+}
+
 function getInputState() {
   return {
     managementPhase: getSelectValue("management-phase"),
@@ -39,6 +51,7 @@ function getInputState() {
     pneumococcalStatus: getSelectValue("pneumococcal-status"),
     rsvStatus: getSelectValue("rsv-status"),
     zosterStatus: getSelectValue("zoster-status"),
+    tdapStatus: getSelectValue("tdap-status"),
     currentRegimen: getSelectValue("current-regimen"),
     persistentDyspnea: getCheckboxValue("persistent-dyspnea"),
     icsSideEffects: getCheckboxValue("ics-side-effects")
@@ -159,6 +172,36 @@ function initSymptomCalculators() {
 
   updateCatCalculatorDisplay();
   updateMmrcDisplay();
+}
+
+function syncSpirometryConfirmationFromRatio() {
+  const ratioInput = document.getElementById("fev1fvc");
+  const confirmationInput = document.getElementById("spirometry-confirmed");
+  const raw = ratioInput.value.trim();
+
+  if (raw === "") {
+    return;
+  }
+
+  const parsed = Number(raw);
+  const normalized = normalizeFev1FvcValue(parsed);
+  if (normalized.value === null) {
+    return;
+  }
+
+  if (normalized.convertedFromPercent) {
+    ratioInput.value = normalized.value.toFixed(2);
+  }
+
+  confirmationInput.checked = normalized.value < 0.7;
+}
+
+function initSpirometryHelpers() {
+  const ratioInput = document.getElementById("fev1fvc");
+  ["input", "change", "blur"].forEach((eventName) => {
+    ratioInput.addEventListener(eventName, syncSpirometryConfirmationFromRatio);
+  });
+  syncSpirometryConfirmationFromRatio();
 }
 
 function getCatImpact(score) {
@@ -480,6 +523,10 @@ function buildPreventiveCare(data) {
     prevention.push("Recommend recombinant zoster vaccine (Shingrix) as a 2-dose intramuscular series, with the second dose 2 to 6 months after the first.");
   }
 
+  if (data.tdapStatus === "unknown" || data.tdapStatus === "not-up-to-date") {
+    prevention.push("Recommend tetanus booster vaccination now because no tetanus-containing vaccine is documented within the last 10 years. Use Tdap if prior adult Tdap is absent or unknown.");
+  }
+
   prevention.push("Keep influenza and COVID-19 vaccination current according to local recommendations.");
 
   if (data.restingSpo2 !== null && data.restingSpo2 <= 92) {
@@ -621,6 +668,11 @@ function buildNoteText(data, rec) {
     completed: "Completed and negative",
     "known-aatd": "Known alpha-1 antitrypsin deficiency"
   };
+  const tdapLabel = {
+    unknown: "Unknown / not documented within the last 10 years",
+    "not-up-to-date": "No tetanus-containing vaccine documented within the last 10 years",
+    "up-to-date": "Documented within the last 10 years"
+  };
 
   lines.push("COPD Management Decision Support Summary");
   lines.push(`Management phase: ${rec.phaseLabel}`);
@@ -660,6 +712,7 @@ function buildNoteText(data, rec) {
   lines.push(`- Chronic bronchitis phenotype: ${data.chronicBronchitis ? "Present (chronic productive cough for 3 months in the year)" : "Not documented"}.`);
   lines.push(`- Concomitant asthma: ${data.concomitantAsthma ? "Suspected / confirmed" : "Not documented"}.`);
   lines.push(`- AATD screening status: ${aatdLabel[data.aatdStatus] || "Unknown"}.`);
+  lines.push(`- Tdap / tetanus booster status: ${tdapLabel[data.tdapStatus] || "Unknown"}.`);
   lines.push("");
   lines.push("Plan:");
   rec.plan.forEach((item, index) => {
@@ -752,3 +805,4 @@ document.getElementById("copd-form").addEventListener("submit", (event) => {
 document.getElementById("copy-note-btn").addEventListener("click", copyNoteOutput);
 
 initSymptomCalculators();
+initSpirometryHelpers();
