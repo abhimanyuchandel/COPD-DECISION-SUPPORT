@@ -28,12 +28,36 @@ function normalizeFev1FvcValue(value) {
   return { value, convertedFromPercent: false };
 }
 
+function getNormalizedFev1FvcFromDom() {
+  const ratioInput = document.getElementById("fev1fvc");
+  const raw = ratioInput.value.trim();
+
+  if (raw === "") {
+    return null;
+  }
+
+  const parsed = Number(raw);
+  const normalized = normalizeFev1FvcValue(parsed);
+
+  if (normalized.value === null) {
+    return null;
+  }
+
+  if (normalized.convertedFromPercent) {
+    ratioInput.value = normalized.value.toFixed(2);
+  }
+
+  return normalized.value;
+}
+
 function getInputState() {
+  const normalizedFev1Fvc = getNormalizedFev1FvcFromDom();
+
   return {
     managementPhase: getSelectValue("management-phase"),
     age: getNumberValue("age"),
     spirometryConfirmed: getCheckboxValue("spirometry-confirmed"),
-    fev1fvc: getNumberValue("fev1fvc"),
+    fev1fvc: normalizedFev1Fvc,
     fev1Predicted: getNumberValue("fev1-predicted"),
     restingSpo2: getNumberValue("resting-spo2"),
     catScore: getNumberValue("cat-score"),
@@ -175,25 +199,14 @@ function initSymptomCalculators() {
 }
 
 function syncSpirometryConfirmationFromRatio() {
-  const ratioInput = document.getElementById("fev1fvc");
   const confirmationInput = document.getElementById("spirometry-confirmed");
-  const raw = ratioInput.value.trim();
+  const normalizedValue = getNormalizedFev1FvcFromDom();
 
-  if (raw === "") {
+  if (normalizedValue === null) {
     return;
   }
 
-  const parsed = Number(raw);
-  const normalized = normalizeFev1FvcValue(parsed);
-  if (normalized.value === null) {
-    return;
-  }
-
-  if (normalized.convertedFromPercent) {
-    ratioInput.value = normalized.value.toFixed(2);
-  }
-
-  confirmationInput.checked = normalized.value < 0.7;
+  confirmationInput.checked = normalizedValue < 0.7;
 }
 
 function initSpirometryHelpers() {
