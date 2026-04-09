@@ -1,39 +1,79 @@
 # COPD Management Decision Support Tool
 
-This project is a local, browser-based clinical support tool for structuring COPD management decisions using GOLD 2026 logic.
+Guideline-mapped workflow for COPD evaluation and management based on the 2026 Global Initiative for Chronic Obstructive Lung Disease Clinical Practice Guidelines.
 
-## What it does
+## Overview
 
-- Assigns GOLD category (A/B/E) from symptom burden and exacerbation history.
-- Includes built-in CAT (8-item) and mMRC calculators that auto-fill symptom scores.
-- Explicitly separates initial pharmacologic management from follow-up pharmacologic management.
-- Applies eosinophil-aware ICS escalation logic and adds dosing guidance for roflumilast, azithromycin, ensifentrine, dupilumab, and mepolizumab when those options are triggered.
-- Adds preventive care and screening prompts, including alpha-1 antitrypsin deficiency screening, lung cancer screening eligibility, pneumococcal, RSV, and zoster vaccination guidance.
-- Adds smoking-cessation treatment options with dosing and key contraindication reminders for current smokers.
-- Surfaces safety checks (spirometry confirmation, asthma coexistence, ICS de-escalation risk, missing screening inputs).
+This repository contains a browser-based clinical decision support prototype for clinicians managing chronic obstructive pulmonary disease (COPD). The tool is designed to make GOLD 2026 treatment logic easier to apply at the point of care by structuring assessment, surfacing treatment pathways, and generating a copy/paste-ready plan for documentation.
+
+It is intended as a clinician support tool, not as an autonomous medical decision maker.
+
+## Current capabilities
+
+- Separates initial pharmacologic management from follow-up pharmacologic management.
+- Assigns GOLD A/B/E grouping from symptom burden and exacerbation history.
+- Includes built-in CAT and mMRC calculators.
+- Notes that higher CAT scores correlate with worse symptom burden.
+- Applies eosinophil-aware inhaled corticosteroid escalation logic.
+- Adds dosing and administration guidance when roflumilast, azithromycin, ensifentrine, dupilumab, or mepolizumab are triggered.
+- Prompts for smoking cessation treatment options, vaccine recommendations, alpha-1 antitrypsin deficiency screening, and lung cancer screening eligibility.
+- Flags advanced-disease considerations such as LTOT, NIV, lung volume reduction referral, and palliative/supportive care review.
 - Generates a copy/paste-ready clinical note summarizing the case and plan.
 
-## How to run
+## Quick start
 
-1. Open `/Users/abhichandel/Documents/Research/COPD decision support tool/index.html` in any modern browser.
-2. Enter patient data.
-3. Click `Generate Management Recommendation`.
+This is a static web app. No build step or server framework is required.
 
-No server setup is required.
+1. Clone the repository.
+2. Open `index.html` in a modern browser.
+3. Enter the patient-specific data.
+4. Review the generated treatment plan, prevention prompts, medication details, and note output.
 
-## Evidence references used in logic
+If you prefer to serve it locally:
 
-- GOLD 2026 Report v1.3 (December 8, 2025):
-  - Report highlights (criteria update and one-moderate-exacerbation threshold)
-  - Chapter 3 initial and follow-up pharmacologic algorithm text (Group A/B/E, Figure 3.8 and Figure 3.9 explanatory text)
+```bash
+python3 -m http.server 8765
+```
+
+Then open `http://127.0.0.1:8765/`.
+
+## Repository contents
+
+- `index.html`: application UI
+- `app.js`: decision logic and note generation
+- `styles.css`: layout and visual styling
+
+## Evidence approach
+
+The current implementation is mapped primarily to:
+
+- GOLD 2026 Report v1.3 (December 8, 2025)
+- Current Centers for Disease Control and Prevention guidance for adult vaccination
+- American Cancer Society lung cancer screening guidance
+- Official prescribing information for medication-specific dosing and administration details
 
 Reference page:
-https://goldcopd.org/2026-gold-report-and-pocket-guide/
 
-## Repository note
+- [GOLD 2026 report and pocket guide](https://goldcopd.org/2026-gold-report-and-pocket-guide/)
 
-The local GOLD PDF and teaching slide deck are not committed to the sharable repository. They are copyrighted reference materials and should be obtained directly from the official GOLD sources.
+## Important repository note
 
-## Important note
+The local GOLD PDF and teaching slide deck used during development are intentionally not committed here. They are copyrighted source materials and should be obtained directly from the official GOLD distribution channels.
 
-This is a decision-support prototype for clinicians. It is not a substitute for full clinical assessment, local policies, or specialist judgment.
+## Clinical disclaimer
+
+This project is for clinician support only. It does not replace clinical judgment, full patient assessment, contraindication review, local formulary restrictions, or institutional/national policy.
+
+## Status
+
+This is an actively evolving prototype. The current sharable branch is:
+
+- `codex/copd-management-tool`
+
+GitHub repository:
+
+- [abhimanyuchandel/COPD-DECISION-SUPPORT](https://github.com/abhimanyuchandel/COPD-DECISION-SUPPORT)
+
+## License
+
+MIT. See the `LICENSE` file.
